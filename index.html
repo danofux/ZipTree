@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZipTree — Archive Tree Explorer</title>
+  <link rel="icon" type="image" href="favicon/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M2 3C2 2.44772 2.44772 2 3 2H7L9 4H13C13.5523 4 14 4.44772 14 5V13C14 13.5523 13.5523 14 13 14H3C2.44772 14 2 13.5523 2 13V3Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+            <path d="M8 7V11M8 7L6.5 8.5M8 7L9.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        Zip<span>Tree</span>
+      </div>
+      <div class="header-badges">
+        <span class="badge badge-mint">client-side · private</span>
+      </div>
+      <div class="header-right">
+        <button class="btn-reset" id="reset-btn" style="display:none">↩ New file</button>
+      </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="main">
+
+      <!-- Drop Zone -->
+      <div class="dropzone" id="dropzone">
+        <div class="dz-inner">
+          <div class="dz-icon">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <rect x="4" y="8" width="40" height="32" rx="4" stroke="currentColor" stroke-width="2" fill="none" opacity="0.3"/>
+              <path d="M4 16H44" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+              <path d="M16 8L20 12H28L32 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.5"/>
+              <path d="M24 22V34M24 22L19 27M24 22L29 27" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="dz-title">Drop your archive here</div>
+          <div class="dz-sub">or click to browse files</div>
+          <div class="dz-types">
+            <span class="type-pill">.zip</span>
+            <span class="type-pill">.tar</span>
+            <span class="type-pill">.tar.gz</span>
+            <span class="type-pill">.gz</span>
+            <span class="type-pill">.rar</span>
+            <span class="type-pill">.7z</span>
+          </div>
+        </div>
+        <div class="dz-glow"></div>
+      </div>
+
+      <!-- Output Area -->
+      <div class="output-area" id="output-area">
+        <div class="output-header">
+          <div class="output-header-left">
+            <span class="file-chip" id="file-name-chip">file.zip</span>
+            <span class="format-badge" id="format-badge"></span>
+            <span class="stats-label" id="stats-label"></span>
+          </div>
+          <div class="output-toolbar">
+            <div class="seg-group" id="char-toggle">
+              <button class="seg-btn active" data-v="unicode">Unicode └──</button>
+              <button class="seg-btn" data-v="ascii">ASCII |--</button>
+            </div>
+            <div class="toolbar-divider"></div>
+            <button class="btn btn-primary" id="copy-btn">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="4" y="4" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 9V2C1 1.44772 1.44772 1 2 1H9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              Copy
+            </button>
+            <button class="btn" id="dl-txt-btn">↓ .txt</button>
+            <button class="btn" id="dl-md-btn">↓ .md</button>
+            <button class="btn" id="dl-json-btn">↓ JSON</button>
+          </div>
+        </div>
+        <div class="tree-scroll">
+          <pre class="tree-code" id="tree-out"></pre>
+        </div>
+      </div>
+
+      <!-- Error Banner -->
+      <div class="error-banner" id="error-banner" style="display:none">
+        <span class="error-icon">⚠</span>
+        <span id="error-text"></span>
+        <button class="error-close" id="error-close">✕</button>
+      </div>
+
+      <!-- Progress -->
+      <div class="progress-wrap" id="progress-wrap">
+        <div class="progress-label" id="progress-label">Unpacking...</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+      <div class="sb-section">
+        <div class="sb-title">Depth</div>
+        <div class="sb-row">
+          <span class="sb-label">Max levels</span>
+          <span class="depth-val" id="depth-val">∞</span>
+        </div>
+        <input type="range" min="0" max="10" value="0" id="depth-slider" step="1" />
+        <div class="sb-hint">0 = unlimited</div>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-title">Ignore Patterns</div>
+        <label class="cb-item"><input type="checkbox" id="ig-nm" checked /><span class="cb-label">node_modules/</span></label>
+        <label class="cb-item"><input type="checkbox" id="ig-git" checked /><span class="cb-label">.git/</span></label>
+        <label class="cb-item"><input type="checkbox" id="ig-ds" checked /><span class="cb-label">.DS_Store</span></label>
+        <label class="cb-item"><input type="checkbox" id="ig-py" checked /><span class="cb-label">__pycache__/</span></label>
+        <label class="cb-item"><input type="checkbox" id="ig-idea" /><span class="cb-label">.idea/</span></label>
+        <label class="cb-item"><input type="checkbox" id="ig-vsc" /><span class="cb-label">.vscode/</span></label>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-title">Display</div>
+        <div class="sb-row">
+          <span class="sb-label">File icons</span>
+          <label class="toggle"><input type="checkbox" id="tog-icons" checked /><span class="slider"></span></label>
+        </div>
+        <div class="sb-row">
+          <span class="sb-label">File sizes</span>
+          <label class="toggle"><input type="checkbox" id="tog-sizes" /><span class="slider"></span></label>
+        </div>
+        <div class="sb-row">
+          <span class="sb-label">Flatten empty dirs</span>
+          <label class="toggle"><input type="checkbox" id="tog-flat" /><span class="slider"></span></label>
+        </div>
+        <div class="sb-row">
+          <span class="sb-label">Dirs first</span>
+          <label class="toggle"><input type="checkbox" id="tog-dirf" checked /><span class="slider"></span></label>
+        </div>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-title">Format Support</div>
+        <div class="format-row" id="lib-status">
+          <span class="fmt-dot fmt-warn"></span>
+          <span class="cb-label" id="lib-status-text">Loading Engine...</span>
+        </div>
+        <div class="sb-hint">Supports: ZIP, TAR, RAR, 7z, GZ, BZ2</div>
+      </div>
+
+      <div class="sb-section sb-privacy">
+        <div class="sb-title" style="color: var(--mint)">🔒 Privacy First</div>
+        <p class="sb-privacy-text">Your files never leave your browser. All processing is 100% local.</p>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <input type="file" id="file-input" accept=".zip,.tar,.gz,.rar,.7z,.bz2,.xz,.tgz" style="display:none" />
+
+  <!-- libarchive.js: handles archive files -->
+  <script type="module" src="lib/libarchive.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
