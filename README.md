@@ -1,4 +1,4 @@
-![Project Logo](https://placehold.co/200x80?text=Logo+Placeholder "The logo I designed represents [meaning]")
+![Project Logo](https://placehold.co/200x80?text=Logo+Placeholder "The logo represents a Tree with a Zipper")
 
 
 
@@ -8,7 +8,7 @@
 
 # ZipTree
 
-I created this project to [briefly explain purpose]. It solves [specific problem] by [your solution approach].
+I created this project to make indexing compresed files way easier. It solves having to go into each subfolder of a compressed file by giving you a clean and understandable interface.
 
 
 
@@ -18,12 +18,12 @@ Here's how to install my project:
 
 ```bash
 # Clone my repository
-git clone https://github.com/myusername/my-project.git
+git clone https://github.com/danofux/ZipTree.git
 
-# Install dependencies I require
+# Install dependencies
 npm install
 
-# Start the development server I configured
+# Start the development server
 npm run dev
 ```
 
@@ -32,7 +32,8 @@ npm run dev
 ## Live Site
 
 Working version here:  
-[Site](https://vyzzze.github.io/ziptree)
+[ZipTree](https://danofux.github.io/ziptree)
+(Hosted on Github)
 
 ![Demo GIF](https://placehold.co/400x200?text=Demo+GIF+Placeholder "I built this interface to show...")
 
